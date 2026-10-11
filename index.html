@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jRadio — зеркало каталога станций</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; color: #222; background: #fff; }
+    @media (prefers-color-scheme: dark) { body { color: #e9ecf1; background: #0c0f13; } a { color: #f0a93c; } }
+    code { font-size: .9em; }
+  </style>
+</head>
+<body>
+  <h1>Зеркало каталога станций для jRadio</h1>
+  <p>Раз в сутки сюда копируется открытый каталог интернет-радио
+    <a href="https://www.radio-browser.info/">Radio Browser</a> — только станции, которые может
+    сохранить <a href="https://github.com/jmper-ha/jradio">jRadio</a>, разложенные по странам, и
+    уменьшенные иконки самых востребованных станций. Отсюда ищет веб-интерфейс радио, когда сам
+    каталог недоступен.</p>
+  <p>Файлы: <code>meta.json</code>, <code>countries.json</code>, <code>stations/&lt;страна&gt;.json</code>,
+    <code>stations/all.json</code>, <code>icons/</code>.</p>
+  <hr>
+  <p lang="en">A daily mirror of the open <a href="https://www.radio-browser.info/">Radio Browser</a>
+    catalogue for the <a href="https://github.com/jmper-ha/jradio">jRadio</a> web interface: the
+    stations the radio can store, split by country, with scaled pictures of the most looked-for ones.</p>
+</body>
+</html>

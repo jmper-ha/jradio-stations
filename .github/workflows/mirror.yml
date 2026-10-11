@@ -1,0 +1,60 @@
+name: mirror
+
+# Once a day, and by hand. The catalogue changes a little every day; the
+# pictures are fetched again only when new, after a month, or a week after
+# they failed - see tools/build_mirror.py.
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  # For the keep-alive at the end.
+  actions: write
+
+concurrency:
+  group: mirror
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # The scaled pictures and what was learned about each address, carried
+      # from run to run: without it every run would fetch three thousand
+      # pictures from three thousand sites. A new key each run, restored from
+      # the newest, is how actions/cache keeps a store that changes.
+      - uses: actions/cache@v6
+        with:
+          path: cache
+          key: pictures-${{ github.run_id }}
+          restore-keys: pictures-
+      - name: Build
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet pillow
+          .venv/bin/python tools/build_mirror.py --out site --cache cache
+          cat site/meta.json
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+      # GitHub stops a schedule after 60 days without a commit. Enabling the
+      # workflow again resets that, with no commit to show for it.
+      - name: Keep the schedule alive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/mirror.yml/enable"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
